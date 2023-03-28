@@ -14,6 +14,7 @@
 		20A522E029D30CC800AD5AF7 /* API Calls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A522DF29D30CC800AD5AF7 /* API Calls.swift */; };
 		20A522E229D30CE300AD5AF7 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A522E129D30CE300AD5AF7 /* Weather.swift */; };
 		20A522E429D30D3600AD5AF7 /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20A522E329D30D3600AD5AF7 /* WeatherView.swift */; };
+		20AE583629D3237700A8BF26 /* Geocoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AE583529D3237700A8BF26 /* Geocoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		20A522DF29D30CC800AD5AF7 /* API Calls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "API Calls.swift"; sourceTree = "<group>"; };
 		20A522E129D30CE300AD5AF7 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		20A522E329D30D3600AD5AF7 /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
+		20AE583529D3237700A8BF26 /* Geocoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geocoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 				20A522E129D30CE300AD5AF7 /* Weather.swift */,
 				20A522DF29D30CC800AD5AF7 /* API Calls.swift */,
 				20A522E329D30D3600AD5AF7 /* WeatherView.swift */,
+				20AE583529D3237700A8BF26 /* Geocoder.swift */,
 				20A522D429D30CA900AD5AF7 /* Assets.xcassets */,
 				20A522D629D30CA900AD5AF7 /* Preview Content */,
 			);
@@ -147,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20A522E429D30D3600AD5AF7 /* WeatherView.swift in Sources */,
+				20AE583629D3237700A8BF26 /* Geocoder.swift in Sources */,
 				20A522E229D30CE300AD5AF7 /* Weather.swift in Sources */,
 				20A522D329D30CA800AD5AF7 /* ContentView.swift in Sources */,
 				20A522E029D30CC800AD5AF7 /* API Calls.swift in Sources */,

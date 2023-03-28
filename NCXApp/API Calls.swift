@@ -7,7 +7,7 @@
 
 import Foundation
 
-func getWeatherAsync() async throws -> WeatherInfo? {
+func getWeatherAsync(coord: Coord) async throws -> WeatherInfo? {
     
     var weather: WeatherInfo
     
@@ -16,8 +16,8 @@ func getWeatherAsync() async throws -> WeatherInfo? {
     url.path = "/data/2.5/weather"
     
     url.queryItems = [
-        URLQueryItem(name: "lat", value: "40.02"),
-        URLQueryItem(name: "lon", value: "10.54"),
+        URLQueryItem(name: "lat", value: "\(coord.lat ?? 0.0)"),
+        URLQueryItem(name: "lon", value: "\(coord.lon ?? 0.0)"),
         URLQueryItem(name: "appid", value: "3f82ad8e7e67f991e05855ce600b049a"),
         URLQueryItem(name: "units", value: "metric")
     ]
@@ -33,25 +33,25 @@ func getWeatherAsync() async throws -> WeatherInfo? {
             
             return weather
         } catch {
-            print("Error decoding JSON")
+            print(error)
         }
     } catch {
-        print("Error making API request")
+        print(error)
     }
     
     return nil
     
 }
 
-func getWeatherHandler(completionHandler: @escaping (WeatherInfo?, Error?) -> Void) {
+func getWeatherHandler(coord: Coord, completionHandler: @escaping (WeatherInfo?, Error?) -> Void) {
     
     var url = URLComponents(string: "https://api.openweathermap.org")!
     
     url.path = "/data/2.5/weather"
     
     url.queryItems = [
-        URLQueryItem(name: "lat", value: "40.02"),
-        URLQueryItem(name: "lon", value: "10.54"),
+        URLQueryItem(name: "lat", value: "\(coord.lat ?? 0.0)"),
+        URLQueryItem(name: "lon", value: "\(coord.lon ?? 0.0)"),
         URLQueryItem(name: "appid", value: "3f82ad8e7e67f991e05855ce600b049a"),
         URLQueryItem(name: "units", value: "metric")
     ]
@@ -70,8 +70,8 @@ func getWeatherHandler(completionHandler: @escaping (WeatherInfo?, Error?) -> Vo
                     
                     completionHandler(weather, nil)
                 } catch {
-                    print("Error decoding JSON")
                     print(error)
+                    completionHandler(nil, error)
                 }
             }
         }
@@ -80,4 +80,39 @@ func getWeatherHandler(completionHandler: @escaping (WeatherInfo?, Error?) -> Vo
         }
     }
     task.resume()
+}
+
+func getCoords(name: String, coord: inout Coord) async -> Void{
+    
+    var url = URLComponents(string: "https://api.openweathermap.org")!
+    
+    url.path = "/geo/1.0/direct"
+    
+    url.queryItems = [
+        URLQueryItem(name: "q", value: name),
+        URLQueryItem(name: "limit", value: "1"),
+        URLQueryItem(name: "appid", value: "3f82ad8e7e67f991e05855ce600b049a")
+    ]
+    
+    do {
+        let (data, _) = try await URLSession.shared.data(for: URLRequest(url: url.url!))
+        //print(response)
+        let decoder = JSONDecoder()
+        var coordInfo = GeocoderInfo()
+        
+        do {
+            coordInfo = try decoder.decode(GeocoderInfo.self, from: data)
+            
+            coord.lon = coordInfo[0].lon
+            coord.lat = coordInfo[0].lat
+            
+            return
+        } catch {
+            print(error)
+        }
+    } catch {
+        print(error)
+    }
+    
+    
 }

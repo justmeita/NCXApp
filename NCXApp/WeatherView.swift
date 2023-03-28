@@ -8,29 +8,34 @@
 import SwiftUI
 
 struct WeatherView: View {
+    @Binding var weather: WeatherInfo
     var body: some View {
-        HStack{
-            Spacer()
-            VStack{
-                Text("New York")
-                    .font(.title)
-                Text("30°")
-                    .font(Font.system(size: 76))
+        if weather.name != "" {
+            HStack{
+                Spacer()
+                VStack{
+                    Text("\(weather.name)")
+                        .font(.title)
+                    Text("\(Int(weather.main.temp ?? 0))°")
+                        .font(Font.system(size: 76))
+                }
+                .padding()
+                Spacer()
+                VStack{
+                    Image(systemName: "\(icon[weather.weather[0].id ?? 800] ?? "sun.min")")
+                        .font(Font.system(size: 76))
+                    Text("\(weather.weather[0].main ?? "")")
+                        .font(.italic(.title)())
+                }
+                .padding()
+                Spacer()
             }
-            Spacer()
-            VStack{
-                Image(systemName: "sun.min")
-                    .font(Font.system(size: 76))
-                Text("Clear")
-                    .font(.italic(.title)())
-            }
-            Spacer()
         }
     }
 }
 
 struct WeatherView_Previews: PreviewProvider {
     static var previews: some View {
-        WeatherView()
+        WeatherView(weather: .constant(WeatherInfo()))
     }
 }
