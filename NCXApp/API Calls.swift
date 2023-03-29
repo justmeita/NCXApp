@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 func getWeatherAsync(coord: Coord) async throws -> WeatherInfo? {
     
@@ -82,7 +83,41 @@ func getWeatherHandler(coord: Coord, completionHandler: @escaping (WeatherInfo?,
     task.resume()
 }
 
-func getCoords(name: String, coord: inout Coord) async -> Void{
+/*func getWeatherCombine(coord: Coord) -> Future<WeatherInfo, Error> {
+    var url = URLComponents(string: "https://api.openweathermap.org")!
+    
+    url.path = "/data/2.5/weather"
+    
+    url.queryItems = [
+        URLQueryItem(name: "lat", value: "\(coord.lat ?? 0.0)"),
+        URLQueryItem(name: "lon", value: "\(coord.lon ?? 0.0)"),
+        URLQueryItem(name: "appid", value: "3f82ad8e7e67f991e05855ce600b049a"),
+        URLQueryItem(name: "units", value: "metric")
+    ]
+    
+    return Future() { promise in
+        URLSession.shared
+            .dataTaskPublisher(for: url.url!)
+            .tryMap() { element -> Data in
+                guard let httpResponse = element.response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 else {
+                            throw URLError(.badServerResponse)
+                      }
+                return element.data
+            }
+            .decode(type: WeatherInfo.self, decoder: JSONDecoder())
+            .sink(receiveCompletion: { (completion) in
+                if case let .failure(error) = completion {
+                    promise(.failure(error))
+                }
+            }, receiveValue: {
+                promise(.success($0))
+            })
+    }
+    
+}*/
+
+func getCoords(name: String) async -> Coord? {
     
     var url = URLComponents(string: "https://api.openweathermap.org")!
     
@@ -103,10 +138,12 @@ func getCoords(name: String, coord: inout Coord) async -> Void{
         do {
             coordInfo = try decoder.decode(GeocoderInfo.self, from: data)
             
-            coord.lon = coordInfo[0].lon
-            coord.lat = coordInfo[0].lat
+            var coords = Coord()
+            coords.lat = coordInfo[0].lat
+            coords.lon = coordInfo[0].lon
             
-            return
+            return coords
+            
         } catch {
             print(error)
         }
@@ -114,5 +151,5 @@ func getCoords(name: String, coord: inout Coord) async -> Void{
         print(error)
     }
     
-    
+    return nil
 }

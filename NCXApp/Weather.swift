@@ -4,15 +4,14 @@
 //
 //  Created by Letterio Ugo Cangiano on 23/03/23.
 //
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let weatherInfo = try? JSONDecoder().decode(WeatherInfo.self, from: jsonData)
+// This file was generated from JSON Schema using quicktype.
 
 import Foundation
+import Combine
 
 // MARK: - WeatherInfo
 struct WeatherInfo: Codable {
+    
     var coord: Coord
     var weather: [Weather]
     var base: String
@@ -144,7 +143,7 @@ struct Wind: Codable {
     }
 }
 
-var icon = [
+let icon : [Int : String] = [
     200 : "cloud.bolt.rain",
     201 : "cloud.bolt.rain",
     202 : "cloud.bolt.rain",
@@ -201,4 +200,10 @@ var icon = [
     802 : "cloud",
     803 : "cloud.sun",
     804 : "cloud.sun"
+]
+
+let counterCodes: [Int: String] = [
+    0 : "Await/Async",
+    1 : "Completion Handler",
+    2 : "Combine"
 ]
