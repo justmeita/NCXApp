@@ -17,3 +17,125 @@ To effectively test this project you have to do the following, once you've open 
 3. Tap "OK" to continue
 4. Repeat steps 1 to 3 to add more locations (max. 3)
 5. Tap "Update View" to make the calls and see the weather info
+
+## DispatchQueue and Completion Handler
+
+```swift
+let task = URLSession.shared.dataTask(with: url.url!) { data, response, error in
+        if let error = error{
+            completionHandler(nil, error)
+        }
+        if let data = data , let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+            DispatchQueue.main.async {
+                
+                let decoder = JSONDecoder()
+                var weather : WeatherInfo?
+                
+                do {
+                    weather = try decoder.decode(WeatherInfo.self, from: data)
+                    
+                    completionHandler(weather, nil)
+                } catch {
+                    print(error)
+                    completionHandler(nil, error)
+                }
+            }
+        }
+        else {
+            completionHandler(nil, (assertionFailure("Invalid Server Response") as! Error))
+        }
+    }
+    task.resume()
+```
+
+## Async/Awaiy
+
+```swift
+func getWeatherAsync(coord: Coord) async throws -> WeatherInfo? {
+
+[...]
+
+do {
+        let (data, _) = try await URLSession.shared.data(for: URLRequest(url: url.url!))
+
+        let decoder = JSONDecoder()
+        
+        do {
+            weather = try decoder.decode(WeatherInfo.self, from: data)
+            
+            return weather
+        } catch {
+            print(error)
+        }
+    } catch {
+        print(error)
+    }
+    
+    return nil
+    
+}
+```
+
+## Combine
+Viewmodel
+```swift
+class WeatherViewModel : ObservableObject {
+    @Published var currentWeatherCombine = WeatherInfo()
+    var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        currentWeatherCombine = WeatherInfo()
+    }
+}
+```
+Function
+```swift
+func getWeatherCombine(coord: Coord) {
+        var url = URLComponents(string: "https://api.openweathermap.org")!
+        
+        url.path = "/data/2.5/weather"
+        
+        url.queryItems = [
+            URLQueryItem(name: "lat", value: "\(coord.lat ?? 0.0)"),
+            URLQueryItem(name: "lon", value: "\(coord.lon ?? 0.0)"),
+            URLQueryItem(name: "appid", value: "3f82ad8e7e67f991e05855ce600b049a"),
+            URLQueryItem(name: "units", value: "metric")
+        ]
+        URLSession.shared
+            .dataTaskPublisher(for: url.url!)
+            .receive(on: DispatchQueue.main)
+            .tryMap() { element -> Data in
+                guard let httpResponse = element.response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 else {
+                    throw URLError(.badServerResponse)
+                }
+                return element.data
+            }
+            .decode(type: WeatherInfo.self, decoder: JSONDecoder())
+            .sink(receiveCompletion: { (completion) in
+                if case let .failure(error) = completion {
+                    print(error)
+                }
+            }, receiveValue: { newWeather in
+                self.currentWeatherCombine = newWeather
+            })
+            .store(in: &self.cancellables)
+        
+}
+```
+
+## Making the calls
+```swift
+getWeatherHandler(coord: coords[0]) { weather, error in
+                     if let newWeather = weather {
+                         currentWeather[0] = newWeather
+                        }
+                     }
+                    
+                    
+                    Task {
+                        currentWeather[1] = try await getWeatherAsync(coord: coordinates) ?? WeatherInfo()
+                    }
+                    
+                    vm.getWeatherCombine(coord: coords[1])
+```
