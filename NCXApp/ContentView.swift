@@ -27,30 +27,16 @@ struct ContentView: View {
                 WeatherView(weather: $vm.currentWeatherCombine)
                 Spacer()
                 Button {
-                    
                     getWeatherHandler(coord: coords[0]) { weather, error in
                      if let newWeather = weather {
                          currentWeather[0] = newWeather
                         }
                      }
                     
-                    
                     Task {
                         currentWeather[1] = try await getWeatherAsync(coord: coordinates) ?? WeatherInfo()
                     }
                     
-                    /*getWeatherCombine(coord: coords[2])
-                        .sink(receiveCompletion: { completion in
-                            switch completion {
-                            case .failure(let err) :
-                                print(err.localizedDescription)
-                            case .finished :
-                                print("Finished")
-                            }
-                        }, receiveValue: { newWeather in
-                            currentWeather[2] = newWeather
-                        })
-                        .store(in: &cancellables)*/
                     vm.getWeatherCombine(coord: coords[1])
                 } label: {
                     ZStack{
