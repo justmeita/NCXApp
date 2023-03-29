@@ -91,16 +91,9 @@ class WeatherViewModel : ObservableObject {
 Function
 ```swift
 func getWeatherCombine(coord: Coord) {
-        var url = URLComponents(string: "https://api.openweathermap.org")!
-        
-        url.path = "/data/2.5/weather"
-        
-        url.queryItems = [
-            URLQueryItem(name: "lat", value: "\(coord.lat ?? 0.0)"),
-            URLQueryItem(name: "lon", value: "\(coord.lon ?? 0.0)"),
-            URLQueryItem(name: "appid", value: "3f82ad8e7e67f991e05855ce600b049a"),
-            URLQueryItem(name: "units", value: "metric")
-        ]
+
+       [...]
+       
         URLSession.shared
             .dataTaskPublisher(for: url.url!)
             .receive(on: DispatchQueue.main)
