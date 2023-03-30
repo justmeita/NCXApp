@@ -52,8 +52,8 @@ func getWeatherHandler(coord: Coord, completionHandler: @escaping (WeatherInfo?,
 }
 ```
 
-## Async/Awaiy
-The main difference here is the 'async' keyword in the function declaration which tells us that this must be later called with the 'await' keyword in a scope that supports asynchronous calls (later we'll call this function into a Task, the Swift manager for multiple threads usage)
+## Async/Await
+The main difference here is the **async** keyword in the function declaration which tells us that this must be later called with the **await** keyword in a scope that supports asynchronous calls (later we'll call this function into a Task, the Swift manager for multiple threads usage)
 ```swift
 func getWeatherAsync(coord: Coord) async throws -> WeatherInfo? {
 
